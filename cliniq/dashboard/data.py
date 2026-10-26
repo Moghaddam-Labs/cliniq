@@ -1,18 +1,22 @@
 """
 ClinIQ Dashboard — Data layer
 get_portfolio_risk: ranked site risk summaries with alert flags and caching.
+get_site_kpi_timeseries, get_trials, get_trial_sites, get_site_deviations:
+cached lookups used by the dashboard and the AI assistant.
 """
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import date
+from datetime import date, timedelta
 from typing import Optional
 
 from sqlalchemy.orm import Session
 
 from cliniq.analytics.velocity import compute_velocity
 from cliniq.dashboard.cache import cache_get, cache_set
-from cliniq.db.models import RiskScore, SiteKPISnapshot, TrialSite
+from cliniq.db.models import (
+    ProtocolDeviation, RiskScore, SiteKPISnapshot, Trial, TrialSite,
+)
 from cliniq.ml.risk_model import compute_risk_score
 
 
@@ -94,3 +98,70 @@ def get_portfolio_risk(db: Session, trial_id: int,
     summaries.sort(key=lambda s: s.composite_score, reverse=True)
     cache_set(cache_key, summaries)
     return summaries
+
+
+def get_site_kpi_timeseries(db: Session, trial_site_id: int,
+                            days: int = 90) -> list[SiteKPISnapshot]:
+    """KPI snapshots for one trial site over the last `days` days, oldest first."""
+    cache_key = f"kpi_timeseries:{trial_site_id}:{days}"
+    cached = cache_get(cache_key)
+    if cached is not None:
+        return cached
+
+    since = date.today() - timedelta(days=days)
+    snaps = (
+        db.query(SiteKPISnapshot)
+        .filter(
+            SiteKPISnapshot.trial_site_id == trial_site_id,
+            SiteKPISnapshot.snapshot_date >= since,
+        )
+        .order_by(SiteKPISnapshot.snapshot_date.asc())
+        .all()
+    )
+    cache_set(cache_key, snaps)
+    return snaps
+
+
+def get_trials(db: Session) -> list[Trial]:
+    """All trials, ordered by title, for dropdowns and portfolio views."""
+    cache_key = "trials:all"
+    cached = cache_get(cache_key)
+    if cached is not None:
+        return cached
+
+    trials = db.query(Trial).order_by(Trial.title.asc()).all()
+    cache_set(cache_key, trials)
+    return trials
+
+
+def get_trial_sites(db: Session, trial_id: int) -> list[TrialSite]:
+    """Active sites for a trial."""
+    cache_key = f"trial_sites:{trial_id}"
+    cached = cache_get(cache_key)
+    if cached is not None:
+        return cached
+
+    trial_sites = (
+        db.query(TrialSite)
+        .filter(TrialSite.trial_id == trial_id, TrialSite.is_active.is_(True))
+        .order_by(TrialSite.id.asc())
+        .all()
+    )
+    cache_set(cache_key, trial_sites)
+    return trial_sites
+
+
+def get_site_deviations(db: Session, trial_site_id: int,
+                        limit: int = 50) -> list[ProtocolDeviation]:
+    """Most recent protocol deviations for a trial site, newest first.
+
+    Not cached: deviations are reviewed and resolved live, so the list
+    should always reflect the current state.
+    """
+    return (
+        db.query(ProtocolDeviation)
+        .filter(ProtocolDeviation.trial_site_id == trial_site_id)
+        .order_by(ProtocolDeviation.deviation_date.desc())
+        .limit(limit)
+        .all()
+    )

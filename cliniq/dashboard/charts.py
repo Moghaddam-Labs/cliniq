@@ -11,7 +11,7 @@ import plotly.graph_objects as go
 
 from cliniq.dashboard.design import COLOURS, risk_colour
 
-# Shared transparent base — no axis keys, add per-chart to avoid duplicate kwargs
+# Shared dark base (matches the dashboard panels) — no axis keys, add per-chart to avoid duplicate kwargs
 _BASE = {
     "template":      "none",
     "paper_bgcolor": "#1a1d2e",
