@@ -76,6 +76,10 @@ def _get_ts_id():
 @pytest.fixture(scope="module")
 def live_server():
     global _server_started
+    # Unit tests earlier in the run cache results from their own throwaway
+    # databases under the same trial IDs; start the live server with a clean cache.
+    from cliniq.dashboard.cache import cache_clear
+    cache_clear()
     _seed_test_db()
     if not _server_started:
         from cliniq.dashboard.app import create_dashboard
@@ -148,10 +152,11 @@ class TestPortfolioView:
         _wait(browser_page)
         assert "Watchlist" in browser_page.content()
 
-    def test_portfolio_dropdown_in_dom(self, browser_page):
+    def test_portfolio_auto_selects_trial(self, browser_page):
+        # The trial dropdown was removed; the first trial is now selected automatically.
         browser_page.goto(SERVER_URL + "/")
         _wait(browser_page)
-        assert browser_page.locator("#portfolio-trial-select").count() > 0
+        assert "Select a trial" not in browser_page.content()
 
     def test_portfolio_heatmap_in_dom(self, browser_page):
         browser_page.goto(SERVER_URL + "/")
@@ -179,10 +184,11 @@ class TestWatchlistView:
         _wait(browser_page)
         assert "Watchlist" in browser_page.content()
 
-    def test_watchlist_dropdown_present(self, browser_page):
+    def test_watchlist_auto_selects_trial(self, browser_page):
+        # The trial dropdown was removed; the first trial is now selected automatically.
         browser_page.goto(SERVER_URL + "/watchlist")
         _wait(browser_page)
-        assert browser_page.locator("#watchlist-trial-select").count() > 0
+        assert "Select a trial" not in browser_page.content()
 
     def test_watchlist_url_correct(self, browser_page):
         browser_page.goto(SERVER_URL + "/watchlist")
@@ -327,7 +333,8 @@ class TestURLRouting:
     def test_sidebar_watchlist_link_navigates(self, browser_page):
         browser_page.goto(SERVER_URL + "/")
         _wait(browser_page)
-        link = browser_page.locator("a[href='/watchlist']").first
+        # Target the desktop sidebar link; the mobile drawer has a hidden duplicate.
+        link = browser_page.locator("a.nav-link-item[href='/watchlist']").first
         link.click()
         _wait(browser_page)
         assert "/watchlist" in browser_page.url
