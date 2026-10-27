@@ -272,9 +272,10 @@ class TestCharts:
         fig = enrolment_curve([TODAY], [5], 10, projected_completion=proj)
         assert isinstance(fig, go.Figure)
 
-    def test_chart_background_transparent(self):
+    def test_chart_background_matches_dashboard_theme(self):
         fig = enrolment_curve([], [], 10)
-        assert "rgba(0,0,0,0)" in (fig.layout.paper_bgcolor or "")
+        assert fig.layout.paper_bgcolor == "#1a1d2e"
+        assert fig.layout.plot_bgcolor == "#1a1d2e"
 
     def test_deviation_timeline_empty_months(self):
         fig = deviation_timeline([], [], [], [])
