@@ -461,7 +461,7 @@ def create_dashboard(server=None) -> Dash:
                         live_pcts, live_velocities,
                         [s.country for s in summaries],
                     )
-                    fig_content = dcc.Graph(figure=fig, style={"height": "420px"},
+                    fig_content = dcc.Graph(id="portfolio-heatmap-chart", figure=fig, style={"height": "420px"},
                                             config={"displayModeBar": False})
 
                     site_cards = dbc.Row([
@@ -744,17 +744,17 @@ def create_dashboard(server=None) -> Dash:
             html.Div(style={"marginTop": "1rem"}, children=[
                 dbc.Row([
                     dbc.Col(html.Div(className="page-card", children=[
-                        dcc.Graph(figure=enr_fig,
+                        dcc.Graph(id="site-enrolment-chart", figure=enr_fig,
                                   config={"displayModeBar": False})
                     ]), md=6),
                     dbc.Col(html.Div(className="page-card", children=[
-                        dcc.Graph(figure=lag_fig,
+                        dcc.Graph(id="site-lag-chart", figure=lag_fig,
                                   config={"displayModeBar": False})
                     ]), md=6),
                 ], className="g-3"),
                 dbc.Row([
                     dbc.Col(html.Div(className="page-card", children=[
-                        dcc.Graph(figure=dev_fig,
+                        dcc.Graph(id="site-deviation-chart", figure=dev_fig,
                                   config={"displayModeBar": False}),
                         html.Div(
                             dcc.Link(
@@ -769,7 +769,7 @@ def create_dashboard(server=None) -> Dash:
                         ),
                     ]), md=6),
                     dbc.Col(html.Div(className="page-card", children=[
-                        dcc.Graph(figure=risk_fig,
+                        dcc.Graph(id="site-risk-breakdown-chart", figure=risk_fig,
                                   config={"displayModeBar": False})
                     ]), md=6),
                 ], className="g-3 mt-0"),

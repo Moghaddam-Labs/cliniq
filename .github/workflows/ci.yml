@@ -12,7 +12,9 @@ jobs:
     timeout-minutes: 20
 
     env:
-      DATABASE_URL: "sqlite:///:memory:"
+      # A file, not :memory:, so the browser tests' server thread sees the same
+      # database as the test that seeds it (each SQLite :memory: connection is separate).
+      DATABASE_URL: "sqlite:///./ci_test.db"
       SECRET_KEY: "ci-test-secret-key-minimum-32-characters"
       ANTHROPIC_API_KEY: ""
 
