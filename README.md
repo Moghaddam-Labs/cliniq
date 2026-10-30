@@ -4,7 +4,7 @@
 
 ClinIQ is a Python-based B2B intelligence platform for monitoring clinical trial site performance, targeting mid-market CROs and biotech sponsors across the UK and EU.
 
-[![CI](https://github.com/ShazMoghaddam/cliniq/actions/workflows/ci.yml/badge.svg)](https://github.com/ShazMoghaddam/cliniq/actions)
+[![CI](https://github.com/Moghaddam-Labs/cliniq/actions/workflows/ci.yml/badge.svg)](https://github.com/Moghaddam-Labs/cliniq/actions)
 
 ---
 
@@ -37,7 +37,7 @@ API docs: `https://cliniq.onrender.com/docs`
 ## Local setup
 
 ```bash
-git clone https://github.com/ShazMoghaddam/cliniq.git
+git clone https://github.com/Moghaddam-Labs/cliniq.git
 cd cliniq
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
@@ -122,6 +122,13 @@ OEM/white-label to mid-market CROs (5–50 concurrent trials):
 - Platform licence: £800–1,500/month
 - White-label: £300/month additional
 - Onboarding: 2-hour call + CSV import, no API integration required for v1
+
+---
+
+## Licence
+
+Proprietary. All rights reserved. The source is published for viewing only; see
+[LICENSE](LICENSE). For commercial licensing, get in touch.
 
 ---
 
