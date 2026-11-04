@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# Secrets and local config
+.env
+
+# Local databases
+*.db
+*.db-shm
+*.db-wal
+
+# macOS
+.DS_Store
