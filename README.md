@@ -1,3 +1,5 @@
+![ClinIQ: clinical trial site performance intelligence](docs/assets/readme-banner.png)
+
 # ClinIQ
 
 **Clinical Trial Site Performance Intelligence**
