@@ -16,7 +16,7 @@ alembic==1.14.1
 psycopg2-binary==2.9.10
 
 # Auth
-python-jose[cryptography]==3.3.0
+PyJWT==2.15.1
 passlib[bcrypt]==1.7.4
 
 # ML / Analytics
