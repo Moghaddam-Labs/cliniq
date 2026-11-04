@@ -10,7 +10,8 @@ from typing import Optional
 
 from fastapi import Depends, HTTPException, Request, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from jose import JWTError, jwt
+import jwt
+from jwt import PyJWTError
 from sqlalchemy.orm import Session
 
 from cliniq.config.settings import get_settings
@@ -92,7 +93,7 @@ def _decode_token(token: str) -> TokenData:
             )
         return TokenData(user_id=user_id, role=role, trial_id=trial_id)
 
-    except JWTError as e:
+    except PyJWTError as e:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail=f"Token validation failed: {e}",
